@@ -1,0 +1,71 @@
+---
+title: "Pre-processing task"
+author: 'Student number: 8520000'
+output: 
+  pdf_document:
+  df_print: kable
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+```{r include=FALSE}
+data <- read_csv('./Data/normal.csv')
+
+store <- read_csv('./Data/DA1920_store.csv')
+  
+test <- read_csv('./Data/DA1920_train.csv')
+
+# merging 
+
+join <- store %>% 
+  left_join(test) %>% 
+  select(-X11, -X12)
+```
+
+
+## Introduction
+In this report I will be looking at sales data from a large drug story chain. I will begin by looking at the data provided and do some initial pre processing. I will then conduct some exploratory analysis of the data. Based on the results, I will conduct further pre-processing. Finally I will fit a very basic model and interpret the results. 
+
+## Pre-processing
+
+We are provided with three data sets, one with information on various stores, and a training and testing data set with information on sales, customers. The first preprocessing step is to join these data sets, on the store variable.
+
+
+
+
+## Exploratory analysis
+We can look at the effect of a few variables on sales, for example we might want to find out if certain days of the week tend to have more sales than others: 
+
+```{r, echo=FALSE}
+join %>%
+  group_by(DayOfWeek) %>% 
+  mutate(DayOfWeek =recode(DayOfWeek, 
+                         `1` = 'Monday', 
+                         `2` = 'Tuesday',
+                         `3` = 'Wednesday',
+                         `4` = 'Thursday',
+                         `5` = 'Friday',
+                         `6` = 'Saturday',
+                         `7` = 'Sunday')) %>%
+  summarise(Sales = mean(Sales)) %>%
+  ggplot()+
+  aes(x = reorder(DayOfWeek, -Sales),
+      y = Sales,
+      fill = DayOfWeek)+
+  geom_col()+
+  theme_minimal()+ 
+  labs(x = "Day of the Week",
+       fill = "Day of the Week")
+  
+```
+
+
+
+## Further pre-processing
+
+## 
+
+## Conclusion

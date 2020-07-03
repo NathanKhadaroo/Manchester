@@ -1,0 +1,6 @@
+"0","join <- store %>% 
+  left_join(test) %>% 
+  select(-X11, -X12)
+"
+"2","Joining, by = ""Store""
+"
