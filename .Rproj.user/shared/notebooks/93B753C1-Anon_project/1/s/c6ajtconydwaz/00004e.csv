@@ -1,0 +1,17 @@
+"0","join %>%
+  mutate(Date = lubridate::dmy(Date),
+         Open = recode(Open,
+                       `0` = 'Closed',
+                       `1` = 'Open')) %>% 
+  filter(lubridate::year(Date) %in% 2013:2016,
+         lubridate::wday(Date) %in% 1:7) %>% 
+  group_by(Date,Open) %>% 
+  summarise(Sales = mean(Sales)) %>% 
+  ggplot(aes(Date, Sales))+
+  geom_point(aes(colour = factor(Open)))+
+  geom_smooth(colour=""black"", method = 'gam')+
+  theme_minimal()+
+  labs(colour = ""Open:"")
+"
+"2","`summarise()` regrouping output by 'Date' (override with `.groups` argument)
+"

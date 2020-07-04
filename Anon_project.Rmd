@@ -2,7 +2,7 @@
 title: "Pre-processing task"
 author: 'Student number: 8520000'
 output: 
-  pdf_document:
+  html_document:
   df_print: kable
 ---
 
@@ -37,9 +37,41 @@ We are provided with three data sets, one with information on various stores, an
 
 
 ## Exploratory analysis
-We can look at the effect of a few variables on sales, for example we might want to find out if certain days of the week tend to have more sales than others: 
 
-```{r, echo=FALSE}
+#### Looking at time variables
+
+First we can visually inspect how sales vary over time.
+
+To do so the mean amount of daily sales was plotted over time. To visually aid interpretation, a generalised additive model was fit to the sales data and it prediction line was plotted in black. Aditionally, we can look at whether stores being open or not has an effect by colouring the points in our graph according to whether the stores were open or not.
+
+```{r, echo=FALSE, message=FALSE}
+
+join %>%
+  mutate(Date = lubridate::dmy(Date),
+         Open = recode(Open,
+                       `0` = 'Closed',
+                       `1` = 'Open')) %>% 
+  filter(lubridate::year(Date) %in% 2013:2016,
+         lubridate::wday(Date) %in% 1:7) %>% 
+  group_by(Date,Open) %>% 
+  summarise(Sales = mean(Sales)) %>% 
+  ggplot(aes(Date, Sales))+
+  geom_point(aes(colour = factor(Open)))+
+  geom_smooth(colour="black", method = 'gam')+
+  theme_minimal()+
+  labs(colour = "Open:")
+
+```
+
+There are a number of insights provided by this graph. 
+
+First, looking at the colours, we can see that when stores are closed sales are always equal to zero. Instead of fitting a model to make predictions for sales on days when stores will be closed, we can instead assume that they will always be zero.
+
+Second, looking at the points and the fitted prediction line, we can see that sales seem to be higher winter than in summer, and there appears to be very high sales around the holiday season every year.
+
+We can look in more detail at the variation in sales over time. For example we might also want to find out if certain days of the week tend to have more sales than others. To do so we can create a box plot showing the mean amount of sales for each day of the week.
+
+```{r, echo=FALSE, message=FALSE}
 join %>%
   group_by(DayOfWeek) %>% 
   mutate(DayOfWeek =recode(DayOfWeek, 
@@ -53,19 +85,72 @@ join %>%
   summarise(Sales = mean(Sales)) %>%
   ggplot()+
   aes(x = reorder(DayOfWeek, -Sales),
-      y = Sales,
-      fill = DayOfWeek)+
+      y = Sales)+
   geom_col()+
   theme_minimal()+ 
-  labs(x = "Day of the Week",
-       fill = "Day of the Week")
+  labs(x = "Day of the Week")
   
 ```
 
+We can see that between Mondays and Saturdays, daily sales are on average between approximately 6000 and 8000.We might consider creating dummy variables for the days of week so we can account for this variation in our modelling.
+
+For Sundays the average amount of sales is much lower ($\approx 204$). We might want to consider fitting a seperate model for Sundays.
+
+### Looking at other variables:
+
+```{r, echo=FALSE, message=FALSE}
+join %>%
+  mutate(Date = lubridate::dmy(Date),
+         Assortment = recode_factor(Assortment,
+                       a = 'Basic',
+                       b = 'Extra',
+                       c = 'Extended')) %>%
+  group_by(Assortment, Date, Open) %>%
+  summarise(Sales = mean(Sales)) %>%
+  filter(Open == 1,
+         Sales < 15000) %>% 
+  ggplot(aes(Date,
+             Sales,
+             colour = Assortment))+
+  geom_point(alpha = 0.3)+
+  geom_smooth()+
+  theme_minimal()+
+  labs(colour = "Assortment type:")
+```
+
+There are two interesting observations here. 
+
+First, stores that offer the 'Extra' assortment level have considerably higher sales than rest, and this gap seems to be widening over time.
+
+Secondly, whilst the gap between 'Basic' and 'Extended' assortment levels is quite small, it seems to become narrower during the holiday season.
+
+We can do the same thing for store type.
+
+```{r, echo=FALSE, message=FALSE}
+join %>%
+  mutate(Date = lubridate::dmy(Date),
+         StoreType = recode_factor(StoreType,
+                       a = 'Model a',
+                       b = 'Model b',
+                       c = 'Model c',
+                       d = 'Model d')) %>%
+  group_by(StoreType, Date, Open) %>%
+  summarise(Sales = mean(Sales)) %>%
+  filter(Open == 1) %>% 
+  ggplot(aes(Date,
+             Sales,
+             colour = StoreType))+
+  geom_point(alpha = 0.3)+
+  geom_smooth()+
+  theme_minimal()+
+  labs(colour = "Store Type:")
+```
+
+Outlets with store model b seem to do significantly better in terms of sales.
 
 
 ## Further pre-processing
 
-## 
+## Fitting and interpreting models
 
 ## Conclusion

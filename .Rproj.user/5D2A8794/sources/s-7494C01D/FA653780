@@ -1,24 +1,22 @@
 {
     "collab_server" : "",
     "contents" : "",
-    "created" : 1593773716678.000,
+    "created" : 1593826992198.000,
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "0",
-    "id" : "E88FE954",
-    "lastKnownWriteTime" : 1593092320,
-    "last_content_update" : 1593092320,
-    "path" : "~/Desktop/Sheffield/SM1610/pre-processing.Rmd",
+    "hash" : "755754069",
+    "id" : "FA653780",
+    "lastKnownWriteTime" : 1591621200,
+    "last_content_update" : 1591621200,
+    "path" : "~/Desktop/Multilevel-Modelling/assignment.Rmd",
     "project_path" : null,
     "properties" : {
-        "cursorPosition" : "3,3",
-        "scrollLine" : "0"
     },
     "read_only" : false,
     "read_only_alternatives" : [
     ],
-    "relative_order" : 3,
+    "relative_order" : 6,
     "source_on_save" : false,
     "source_window" : "",
     "type" : "r_markdown"
